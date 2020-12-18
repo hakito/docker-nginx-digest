@@ -63,6 +63,13 @@ RUN apk del .build-deps
 RUN apk --update add --no-cache pcre \
     && mkdir /var/lib/nginx/tmp
 
+RUN mkdir /var/log/nginx \
+# forward request and error logs to docker log collector
+    && ln -sf /dev/stdout /var/log/nginx/access.log \
+    && ln -sf /dev/stderr /var/log/nginx/error.log \
+# create a docker-entrypoint.d directory
+    && mkdir /docker-entrypoint.d
+
 COPY docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
 EXPOSE 80
